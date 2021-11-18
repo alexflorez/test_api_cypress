@@ -1,7 +1,9 @@
-import pathlib
 import argparse
-import subprocess
 import os
+import pathlib
+import subprocess
+import time
+import signal
 
 parser = argparse.ArgumentParser()
 parser.add_argument("file", help="zipped file")
@@ -9,24 +11,42 @@ args = parser.parse_args()
 zipfile = pathlib.Path(args.file)
 
 target = zipfile.stem
-cmd = ["unzip", "-q", "-o", f"{zipfile}", "-d" f"{target}"]
-subprocess.run(cmd)
+cmd_unzip = ["unzip", "-q", "-o", f"{zipfile}", "-d" f"{target}"]
+subprocess.run(cmd_unzip)
 
-cwd = zipfile.cwd()
-contents = cwd / target
+cwd = os.getcwd()
+contents = pathlib.Path(cwd) / target
 
 config_json = "package.json"
 files = [file.name for file in contents.iterdir() if file.is_file()]
-if config_json in files:
-    print("Proceed")
+if not config_json in files:
+    print("Cannot proceed. "
+          f"{config_json} not found")
+    exit()
 
-os.chdir(target)
+os.chdir(contents)
 
-cmd = ["npm", "install"]
-subprocess.run(cmd)
+cmd_install = ["npm", "install"]
+subprocess.run(cmd_install)
 
-cmd = ["npm", "start"]
+cmd_start = ["npm", "start"]
+proc = subprocess.Popen(cmd_start, stdout=subprocess.PIPE, 
+                        preexec_fn=os.setsid)
+
+os.chdir(cwd)
+os.chdir('..')
+file_spec = "apinode.spec.js"
+cmd_cypress = ["npx", "cypress", "run", 
+               "--spec", f"cypress/integration/{file_spec}",
+               ">", f"{target}_out.txt"]
+subprocess.run(cmd_cypress)
+
 try:
-    subprocess.run(cmd, timeout=60)
-except Exception as e:
-    print("Time passed")
+    outs, errs = proc.communicate(timeout=30)
+    print("try: ", outs)
+except subprocess.TimeoutExpired:
+    proc.kill()
+    os.killpg(os.getpgid(proc.pid), signal.SIGTERM)  
+    outs, errs = proc.communicate()
+    print("except: ", outs)
+
