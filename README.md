@@ -1,14 +1,17 @@
-# Test API with Cypress
+# Testing an API with Cypress
 
-Files to test Node API with Cypress
+There are two directories cypress and automate.
+- `test_api` contains the code that runs the tests over the API server.
+- `automate` contains a program that installs and starts the API server in node.js.
 
-# Server
-Start server
-`npm start` 
-It maps to 
-`node .\bin\server.js`
+## Requirements
+- `node.js` and `npm` to run the API server
+- `python` 3.9 to run the automate program
+- `unzip` to decompress the server code 
 
-# Cypress
-Start Cypress
+## Steps to run the automation
 
-`npx cypress open`
+From the root directory
+- `python automate codepass.zip`
+
+This will install Cypress and then uncompress the server code and start the API server.
