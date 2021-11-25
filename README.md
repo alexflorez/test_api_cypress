@@ -1,6 +1,6 @@
 # Testing an API with Cypress
 
-There are two directories cypress and automate.
+There are two directories test_api and automate.
 - `test_api` contains the code that runs the tests over the API server.
 - `automate` contains a program that installs and starts the API server in node.js.
 
