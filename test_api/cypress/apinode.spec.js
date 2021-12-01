@@ -28,7 +28,7 @@ describe('2: GET request', () => {
         })
         .then((response) => {
             expect(response.body).to.not.be.empty
-            expect(response.body.name).to.equal("Jane")
+            expect(response.body.name).to.equal("John")
             expect(response.body.surname).to.equal("Doe")
         })
     })
@@ -51,7 +51,7 @@ describe('4: Read a non valid key', () => {
         cy.request("http://localhost:3000/store/doe")
         .then((response) => {
             expect(response.status).equal(200)  
-            expect(response.body).to.be.not.empty
+            expect(response.body).to.be.empty
         })
     })
 })
