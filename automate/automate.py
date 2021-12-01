@@ -3,6 +3,7 @@ import os
 import pathlib
 import signal
 import subprocess
+import sys
 import time
 
 
@@ -42,6 +43,15 @@ def report(results):
     print("========================")
 
 
+def check_node():
+    if sys.platform == 'linux':
+        cmd_kill = ["pkill", "-f", "node"]
+        subprocess.run(cmd_kill)
+    elif sys.platform == 'win32':
+        cmd_kill = ["taskkill", "/F", "/IM", "node.exe"]
+        subprocess.run(cmd_kill)
+
+
 def install_cypress():
     cwd = os.getcwd()
     os.chdir(API_DIR)
@@ -78,6 +88,7 @@ def run_api_server():
     cmd_install = ["npm", "install", "--quiet"]
     subprocess.run(cmd_install)
 
+    check_node()
     cmd_start = ["npm", "start"]
     proc = subprocess.Popen(cmd_start, stdout=subprocess.PIPE, 
                             preexec_fn=os.setsid)
