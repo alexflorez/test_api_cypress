@@ -1,23 +1,4 @@
-describe('Make a request to API', () => {
-    it('Visit API', () => {
-        // Arrange - setup initial app state
-        /// - visit a web page
-        /// - query for an element
-        // Act - take an action
-        /// - interact with that element
-        // Assert - make an assertion
-        /// - make an asertion about page content
-        cy.request("http://localhost:3000/")
-        .should((response) => {
-            expect(response).property('status').to.equal(200)
-            expect(response).to.have.property('headers')
-            expect(response).to.have.property('duration')
-            expect(response.body).to.not.be.empty
-        })
-    })
-})
-
-describe('PUT request', () => {
+describe('1: PUT request', () => {
     it('save record in server', () => {
         cy.request({
             method: 'PUT', 
@@ -37,7 +18,7 @@ describe('PUT request', () => {
     })
 })
 
-describe('GET request', () => {
+describe('2: GET request', () => {
     it('get record from server', () => {
         cy.request("http://localhost:3000/store/john")
         .should((response) => {
@@ -47,13 +28,13 @@ describe('GET request', () => {
         })
         .then((response) => {
             expect(response.body).to.not.be.empty
-            expect(response.body.name).to.equal("John")
+            expect(response.body.name).to.equal("Jane")
             expect(response.body.surname).to.equal("Doe")
         })
     })
 })
 
-describe('DELETE request', () => {
+describe('3: DELETE request', () => {
     it('delete record in server', () => {
         cy.request('DELETE', "http://localhost:3000/store/john")
         .should((response) => {
@@ -65,17 +46,17 @@ describe('DELETE request', () => {
     })
 })
 
-describe('Read a non valid key', () => {
+describe('4: Read a non valid key', () => {
     it('response is empty', () => {
         cy.request("http://localhost:3000/store/doe")
         .then((response) => {
             expect(response.status).equal(200)  
-            expect(response.body).to.be.empty
+            expect(response.body).to.be.not.empty
         })
     })
 })
 
-describe('Create record in public page', () => {
+describe('5: Create record in public page', () => {
     it('enter and create data', () => {
         cy.visit("http://localhost:3000/test.html")
         cy.get("input[type=text]").eq(0).clear().type("john{enter}")
@@ -86,7 +67,7 @@ describe('Create record in public page', () => {
     })
 })
 
-describe('Recover record in public page', () => {
+describe('6: Recover record in public page', () => {
     it('recover data from store', () => {
         cy.visit("http://localhost:3000/test.html")
         cy.get("input[type=text]").eq(0).clear().type("john")
@@ -97,7 +78,7 @@ describe('Recover record in public page', () => {
     })
 })
 
-describe('Delete record in public page', () => {
+describe('7: Delete record in public page', () => {
     it('delete data from store', () => {
         cy.visit("http://localhost:3000/test.html")
         cy.get("input[type=text]").eq(0).clear().type("john")
@@ -109,7 +90,7 @@ describe('Delete record in public page', () => {
     })
 })
 
-describe('Recover non existing record in public page', () => {
+describe('8: Recover non existing record in public page', () => {
     it('not show any data', () => {
         cy.visit("http://localhost:3000/test.html")
         cy.get("input[type=text]").eq(0).clear().type("john")
