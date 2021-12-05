@@ -65,6 +65,7 @@ def install_cypress():
 
 
 def run_api_server():
+    check_node()
     parser = argparse.ArgumentParser()
     parser.add_argument("file", help="zipped file")
     args = parser.parse_args()
@@ -88,8 +89,7 @@ def run_api_server():
     cmd_install = ["npm", "install", "--quiet"]
     subprocess.run(cmd_install)
 
-    check_node()
-    cmd_start = ["npm", "start"]
+    cmd_start = ["node", "./bin/server.js"]
     proc = subprocess.Popen(cmd_start, stdout=subprocess.PIPE, 
                             preexec_fn=os.setsid)
     
@@ -97,7 +97,7 @@ def run_api_server():
     os.chdir(API_DIR)
     file_spec = "apinode.spec.js"
     cmd_cypress = ["npx", "cypress", "run", 
-                   " --spec", f"cypress/{file_spec}"]
+                   "--spec", f"cypress/{file_spec}"]
                    
     cyproc = subprocess.run(cmd_cypress, capture_output=True, text=True)
     results = cyproc.stdout
